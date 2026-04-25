@@ -14,53 +14,56 @@
 		<script src="/baremux/index.js"></script>
 		
 		<link rel="stylesheet" href="index.css" />
-		<script src="register-sw.js" defer></script>
-		<script src="search.js" defer></script>
-		<script src="index.js" defer></script>
+
 	</head>
 
-	<body>
-		<div title="Scramjet Logo" class="flex-center logo-wrapper header-center">
-			<img class="logo" src="sj.png" alt="Scramjet" />
-			<h1>Scramjet | MW</h1>
-		</div>
-		<div class="flex-center desc left-margin">
-			<p>
-				Scramjet is an experimental interception based web proxy designed to
-				evade internet censorship, bypass arbitrary web browser restrictions and
-				innovate web proxy technologies.
-			</p>
+
+	<div id="sidebar" class="sidebar">
+		<div class="sidebar-header">
+			<h3>Menu</h3>
 		</div>
 
-		<form id="sj-form" class="flex-center">
-			<input
-				id="sj-search-engine"
-				value="https://www.google.com/search?q=%s"
-				type="hidden"
-			/>
-			<input id="sj-address" type="text" placeholder="Search the web freely" />
-		</form>
-		<div class="desc left-margin">
-			<p id="sj-error"></p>
-			<pre id="sj-error-code"></pre>
+		<div class="sidebar-section">
+			<button onclick="location.href='/index.html'">Home</button>
+			<button onclick="location.href='/games.html'">Games</button>
+			<button onclick="location.href='/credits.html'">Credits</button>
 		</div>
-		<footer>
-			<div>
-				<a
-					title="The Mercury Workshop GitHub organization"
-					href="https://github.com/MercuryWorkshop"
-					>Mercury Workshop</a
-				>
-				<a
-					title="The example demo app for Scramjet"
-					href="https://github.com/MercuryWorkshop/Scramjet-Demo"
-					>GitHub</a
-				>
-				<a title="License information" href="credits.html">Credits</a>
-			</div>
-			<div>
-				<span>Scramjet &copy; MW 2025</span>
-			</div>
-		</footer>
+	</div>
+
+	<body>
+	<div class="bg"></div>
+
+	<div class="container">
+		<img class="logo" src="logo.png" alt="ryk logo">
+
+		<form id="sj-form">
+			<input
+					id="sj-address"
+					type="text"
+					placeholder="Search or enter a URL"
+					autocomplete="false"
+			/>
+		</form>
+
+		<div class="quick-links">
+			<button onclick="document.getElementById('sj-address').value='youtube.com'; document.getElementById('sj-form').dispatchEvent(new Event('submit'));">YouTube</button>
+			<button onclick="document.getElementById('sj-address').value='tiktok.com'; document.getElementById('sj-form').dispatchEvent(new Event('submit'));">TikTok</button>
+			<button onclick="document.getElementById('sj-address').value='google.com'; document.getElementById('sj-form').dispatchEvent(new Event('submit'));">Google</button>
+		</div>
+
+		<p id="sj-error"></p>
+		<p> Press ` for sidebar</p>
+	</div>
+	<div id="bottom-box" class="bottom-box">
+		<button id="back-btn">←</button>
+		<button id="reload-btn">⟳</button>
+
+		<input id="bottom-url" type="text" />
+
+		<button id="go-btn">Go</button>
+	</div>
 	</body>
+	<script src="register-sw.js" defer></script>
+	<script src="search.js" defer></script>
+	<script src="index.js" defer></script>
 </html>

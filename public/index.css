@@ -1,159 +1,281 @@
-@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap");
+/* Reset */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
 
 body {
-	font-family: "Roboto", Arial, Helvetica, sans-serif;
 	margin: 0;
-	background: #111;
-	display: flex;
-	flex-direction: column;
-	min-height: 100vh;
-}
-
-.flex-center {
-	display: flex;
-	justify-content: center;
-}
-
-.header-center {
-	align-items: center;
-	flex-direction: column;
-	margin-top: 10%;
-}
-
-.left-margin {
-	margin: 0px 16px;
-}
-
-#sj-frame {
-	border: none;
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100vw;
 	height: 100vh;
-	background-color: #111;
-}
-
-#sj-error {
-	color: #ff6666 !important;
-	white-space: pre-wrap;
-}
-
-#sj-error-code {
-	font-size: 12px;
-	color: #fff;
-	font-family: "Courier New", Courier, monospace;
-}
-
-.logo {
-	height: 25vh;
-}
-
-.logo-wrapper .text {
-	font-size: 75px;
-	color: #fff;
-}
-
-.logo-wrapper h1 {
+	overflow: hidden;
+	font-family: "Segoe UI", Arial, sans-serif;
 	color: white;
 }
 
-footer {
-	margin: 0 16px;
-	margin-top: auto;
+.container {
 	display: flex;
 	flex-direction: column;
-	line-height: 30px;
+	align-items: center;
+	justify-content: center;
+	height: 100vh;
+}
+
+/* Background */
+body::before {
+	content: "";
+	position: fixed;
+	inset: 0;
+	background: url("bg.jpg") center/cover no-repeat;
+	filter: brightness(0.5);
+	z-index: -2;
+}
+
+/* Blur overlay */
+/*body::after { i dont like blur really, i thought i might but ig not
+	content: "";
+	position: fixed;
+	inset: 0;
+	backdrop-filter: blur(8px);
+	z-index: -1;
+} */
+
+/* Layout */
+.container {
+	text-align: center;
+	width: 100%;
+}
+
+/* Logo */
+.logo-wrapper {
 	margin-bottom: 20px;
 }
 
-footer > div {
-	display: flex;
-	justify-content: left;
-	align-items: center;
-	flex-wrap: wrap;
-	margin-bottom: 15px;
+.logo {
+	width: 80px;
+	margin-bottom: 10px;
 }
 
-footer a,
-footer span {
-	margin: 0 15px;
-	text-decoration: none;
-	color: #fff;
-	font-size: 15px;
+h1 {
+	font-weight: 300;
+	font-size: 48px;
+}
+
+/* Description */
+.desc {
+	opacity: 0.8;
+	margin-bottom: 20px;
+	font-size: 14px;
+}
+
+/* Search form */
+#sj-form {
+	margin-top: 20px;
+}
+
+#sj-frame {
+	position: fixed;
+	inset: 0;
+	width: 100vw;
+	height: 100vh;
+	border: none;
+	z-index: 100;
+}
+
+.bottom-box {
+	position: fixed;
+	bottom: 20px;
+	left: 50%;
+	transform: translateX(-50%);
+
+	display: flex;
+	gap: 8px;
+	align-items: center;
+
+	background: rgb(12, 39, 117);
+	padding: 10px;
+	border-radius: 12px;
+
+	z-index: 999999;
+
+	opacity: 0;
+	transition: 0.3s ease;
+}
+
+.bottom-box.show {
+	opacity: 1;
+}
+
+#bottom-url {
+	width: 300px;
+	padding: 6px;
+	border-radius: 6px;
+	border: none;
+	outline: none;
+}
+
+.sidebar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 280px;
+	height: 100vh;
+
+	background: rgba(20, 20, 20, 0.75);
+	backdrop-filter: blur(14px);
+
+	transform: translateX(-100%);
+	transition: transform 0.25s ease;
+
+	z-index: 10000;
+
+	display: flex;
+	flex-direction: column;
+
+	padding: 16px;
+	gap: 12px;
+}
+
+.sidebar.open {
+	transform: translateX(0);
+}
+
+.sidebar-header {
+	font-size: 18px;
+	font-weight: 500;
+	opacity: 0.9;
+	margin-bottom: 10px;
+}
+
+.sidebar-section {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	flex: 1;
+}
+
+#sidebar-toggle {
+	position: fixed;
+	z-index: 10001;
+}
+
+.sidebar button {
+	padding: 10px 12px;
+	border-radius: 10px;
+	border: none;
+
+	background: rgba(255, 255, 255, 0.08);
+	color: white;
+
+	cursor: pointer;
+	text-align: left;
+
+	transition: 0.15s ease;
+}
+
+.sidebar button:hover {
+	background: rgba(255, 255, 255, 0.16);
+	transform: translateX(4px);
+}
+
+.sidebar-footer {
+	opacity: 0.5;
+	font-size: 12px;
+}
+
+/* Search input */
+#sj-address {
+	width: 420px;
+	max-width: 90%;
+	padding: 14px;
+	font-size: 16px;
+	border-radius: 12px;
+	border: none;
+	outline: none;
+	color: white;
+	background: rgba(255, 255, 255, 0.15);
+	backdrop-filter: blur(12px);
+	transition: 0.2s;
+}
+
+/* Focus effect */
+#sj-address:focus {
+	background: rgba(255, 255, 255, 0.25);
+}
+
+/* Error text */
+#sj-error {
+	margin-top: 15px;
+	color: #ff6b6b;
+	font-size: 13px;
+}
+
+/* Footer */
+footer {
+	position: absolute;
+	bottom: 10px;
+	width: 100%;
+	text-align: center;
+	font-size: 12px;
+	opacity: 0.6;
 }
 
 footer a {
-	cursor: pointer;
+	color: white;
+	margin: 0 8px;
+	text-decoration: none;
 }
 
 footer a:hover {
 	text-decoration: underline;
 }
 
-.desc p {
-	width: 560px;
-	color: rgba(253, 253, 253, 0.514);
-}
-
-#sj-address {
-	background: none;
-	font-family: inherit;
-	padding: 0px 17px;
-	height: 48px;
-	border: 1px solid rgb(255, 255, 255, 0.2);
-	color: var(--text-color);
-	border-radius: 3px;
-	outline: none;
-	width: 350px;
-	margin-top: 5px;
-	border-radius: 50px;
-	color: #fff;
-	transition: border-radius 0.1s;
-}
-
-#sj-address:focus {
-	border: 1px solid rgba(253, 253, 253, 0.514);
-	border-radius: 6px;
-}
-
-.credit {
-	border-radius: 10px;
-	padding: 10px;
-	display: block;
-	border: #fff 1px solid;
-	color: #fff;
+.quick-links {
+	margin-top: 24px;
 	display: flex;
+	justify-content: center;
+	gap: 12px;
 	flex-wrap: wrap;
-	margin-bottom: 15px;
 }
 
-.credit label {
-	margin-left: auto;
-	margin-right: 15px;
-}
+button {
+	padding: 10px 16px;
+	border-radius: 12px;
 
-.credit a,
-.credit label {
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	background: rgba(255, 255, 255, 0.08);
 	color: white;
-	text-decoration: underline;
-	text-align: right;
-}
 
-.credit pre {
-	display: none;
-	width: 100%;
-}
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
 
-.credit label::after {
-	content: "show license";
 	cursor: pointer;
+	font-size: 14px;
+	transition: all 0.2s ease;
+
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 }
 
-.credit input:checked + label::after {
-	content: "hide license";
+button:hover {
+	transform: translateY(-2px) scale(1.03);
+	background: rgba(255, 255, 255, 0.15);
+	border-color: rgba(255, 255, 255, 0.35);
+	box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
 }
 
-.credit input:checked ~ pre {
-	display: block;
+button:active {
+	transform: translateY(0px) scale(0.98);
+}
+
+.credits-cards {
+	margin-top: 94px;
+	display: flex;
+	justify-content: center;
+	gap: 92px;
+	flex-wrap: wrap;
+}
+.logo {
+	width: 880px;
+	margin-bottom: 10px;
+
 }
