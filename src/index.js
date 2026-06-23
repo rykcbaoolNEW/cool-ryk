@@ -35,20 +35,6 @@ const fastify = Fastify({
 	},
 });
 
-const app = Fastify({
-  serverFactory: (h) => (
-    server.on("request", (req, res) => {
-      if (bare?.shouldRoute(req)) return bare.routeRequest(req, res);
-      h(req, res);
-    }),
-    server
-  ),
-  logger: false,
-  keepAliveTimeout: 30000,
-  connectionTimeout: 60000,
-  forceCloseConnections: true
-});
-
 fastify.register(fastifyStatic, {
 	root: publicPath,
 	decorateReply: true,
@@ -76,29 +62,38 @@ fastify.setNotFoundHandler((res, reply) => {
 	return reply.code(404).type("text/html").sendFile("404.html");
 });
 
-app.get("/tls-check", (req, res) => {
-  const ip = req.ip === "::1" ? "127.0.0.1" : req.ip;
+fastify.get("/tls-check", async (request, reply) => {
+  const ip = request.ip === "::1" ? "127.0.0.1" : request.ip;
+
   if (ip !== "127.0.0.1") {
-    return res.sendStatus(403);
+    return reply.code(403).send();
   }
 
-  const domain = (req.query.domain || "").toLowerCase();
-  if (!domain) return res.sendStatus(403);
+  const domain = (request.query.domain || "").toLowerCase();
+  if (!domain) {
+    return reply.code(403).send();
+  }
 
   const parsed = psl.parse(domain);
-  if (parsed.error) return res.sendStatus(403);
+  if (parsed.error) {
+    return reply.code(403).send();
+  }
+
   const root = parsed.domain;
-  if (!root) return res.sendStatus(403);
+  if (!root) {
+    return reply.code(403).send();
+  }
 
   // ✅ ALLOWLIST CHECK
   if (!isAllowedDomain(domain)) {
-    return res.sendStatus(403);
+    return reply.code(403).send();
   }
 
   if (ENABLE_LOG) {
     console.log("TLS CHECK:", domain, "→", root);
   }
-  return res.sendStatus(200);
+
+  return reply.code(200).send();
 });
 
 fastify.server.on("listening", () => {
