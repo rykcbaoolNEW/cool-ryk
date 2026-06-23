@@ -62,6 +62,31 @@ fastify.setNotFoundHandler((res, reply) => {
 	return reply.code(404).type("text/html").sendFile("404.html");
 });
 
+app.get("/tls-check", (req, res) => {
+  const ip = req.ip === "::1" ? "127.0.0.1" : req.ip;
+  if (ip !== "127.0.0.1") {
+    return res.sendStatus(403);
+  }
+
+  const domain = (req.query.domain || "").toLowerCase();
+  if (!domain) return res.sendStatus(403);
+
+  const parsed = psl.parse(domain);
+  if (parsed.error) return res.sendStatus(403);
+  const root = parsed.domain;
+  if (!root) return res.sendStatus(403);
+
+  // ✅ ALLOWLIST CHECK
+  if (!isAllowedDomain(domain)) {
+    return res.sendStatus(403);
+  }
+
+  if (ENABLE_LOG) {
+    console.log("TLS CHECK:", domain, "→", root);
+  }
+  return res.sendStatus(200);
+});
+
 fastify.server.on("listening", () => {
 	const address = fastify.server.address();
 
