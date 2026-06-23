@@ -35,6 +35,20 @@ const fastify = Fastify({
 	},
 });
 
+const app = Fastify({
+  serverFactory: (h) => (
+    server.on("request", (req, res) => {
+      if (bare?.shouldRoute(req)) return bare.routeRequest(req, res);
+      h(req, res);
+    }),
+    server
+  ),
+  logger: false,
+  keepAliveTimeout: 30000,
+  connectionTimeout: 60000,
+  forceCloseConnections: true
+});
+
 fastify.register(fastifyStatic, {
 	root: publicPath,
 	decorateReply: true,
