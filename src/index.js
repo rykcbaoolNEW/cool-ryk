@@ -9,6 +9,8 @@ import { scramjetPath } from "@mercuryworkshop/scramjet/path";
 import { libcurlPath } from "@mercuryworkshop/libcurl-transport";
 import { baremuxPath } from "@mercuryworkshop/bare-mux/node";
 
+import psl from "psl";
+
 const publicPath = fileURLToPath(new URL("../public/", import.meta.url));
 
 // Wisp Configuration: Refer to the documentation at https://www.npmjs.com/package/@mercuryworkshop/wisp-js
@@ -19,6 +21,13 @@ Object.assign(wisp.options, {
 	hostname_blacklist: [/example\.com/],
 	dns_servers: ["1.1.1.3", "1.0.0.3"],
 });
+
+const ENABLE_LOG = true;
+
+function isAllowedDomain(domain) {
+  // TEMP: allow everything for now
+  return true;
+}
 
 const fastify = Fastify({
 	serverFactory: (handler) => {
@@ -63,37 +72,43 @@ fastify.setNotFoundHandler((res, reply) => {
 });
 
 fastify.get("/tls-check", async (request, reply) => {
-  const ip = request.ip === "::1" ? "127.0.0.1" : request.ip;
+  try {
+    const ip = request.ip === "::1" ? "127.0.0.1" : request.ip;
 
-  if (ip !== "127.0.0.1") {
-    return reply.code(403).send();
+    if (ip !== "127.0.0.1") {
+      return reply.code(403).send();
+    }
+
+    const domain = (request.query.domain || "").toLowerCase();
+    if (!domain) {
+      return reply.code(403).send();
+    }
+
+    let parsed;
+    try {
+      parsed = psl.parse(domain);
+    } catch (e) {
+      return reply.code(403).send();
+    }
+
+    const root = parsed?.domain;
+    if (!root) {
+      return reply.code(403).send();
+    }
+
+    if (!isAllowedDomain(domain)) {
+      return reply.code(403).send();
+    }
+
+    if (ENABLE_LOG) {
+      console.log("TLS CHECK:", domain, "→", root);
+    }
+
+    return reply.code(200).send("ok");
+  } catch (err) {
+    console.error("TLS CHECK CRASH:", err);
+    return reply.code(200).send("deny");
   }
-
-  const domain = (request.query.domain || "").toLowerCase();
-  if (!domain) {
-    return reply.code(403).send();
-  }
-
-  const parsed = psl.parse(domain);
-  if (parsed.error) {
-    return reply.code(403).send();
-  }
-
-  const root = parsed.domain;
-  if (!root) {
-    return reply.code(403).send();
-  }
-
-  // ✅ ALLOWLIST CHECK
-  if (!isAllowedDomain(domain)) {
-    return reply.code(403).send();
-  }
-
-  if (ENABLE_LOG) {
-    console.log("TLS CHECK:", domain, "→", root);
-  }
-
-  return reply.code(200).send();
 });
 
 fastify.server.on("listening", () => {
